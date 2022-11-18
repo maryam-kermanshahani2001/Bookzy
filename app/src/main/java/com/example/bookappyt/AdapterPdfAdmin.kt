@@ -1,6 +1,8 @@
 package com.example.bookappyt
 
+import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.view.Display.Mode
 import android.view.LayoutInflater
 import android.view.View
@@ -79,7 +81,48 @@ class AdapterPdfAdmin : RecyclerView.Adapter<AdapterPdfAdmin.HolderPdfAdmin>, Fi
         // load pdf size
         MyApplication.loadPdfSize(pdfUrl, title, holder.sizeTv)
 
+        // handle click, show dialog with options 1) Edit Book, 2) Delete Book
+        holder.moreBtn.setOnClickListener {
+            moreOptionsDialog(model, holder)
+        }
 
+        // handle item click, open PdfDetailActivity activity, lets create it first
+        holder.itemView.setOnClickListener{
+            // intent with book id
+            val intent = Intent(context, PdfDetailActivity::class.java)
+            intent.putExtra("bookId", pdfId)
+            context.startActivity(intent)
+        }
+
+
+    }
+
+    private fun moreOptionsDialog(model: ModelPdf, holder: HolderPdfAdmin) {
+        // get id,url,title of book
+        val bookId= model.id
+        val bookUrl= model.url
+        val bookTitle= model.title
+
+        // options to show in dialog
+        val options = arrayOf("Edit", "Delete")
+
+        // alert Dialog
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle("Choose Option")
+            .setItems(options){dialog, position ->
+                if (position == 0) {
+                    // Edit is Clicked
+                    val intent = Intent(context, PdfEditActivity::class.java)
+                    intent.putExtra("bookId", bookId)
+                    context.startActivity(intent)
+
+                } else if (position == 1) {
+                    // Delete is clicked
+                    // show confirmation dialog first if you need...
+                    MyApplication.deleteBook(context, bookId, bookUrl, bookTitle)
+                }
+            }
+            .show()
     }
 
     override fun getItemCount(): Int {

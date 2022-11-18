@@ -61,7 +61,7 @@
         android:hint="Search"
         android:textColorHint="@color/gray02"
         android:textColor="@color/black"/>
-1
+
 <!--    pdf/book list-->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/booksRv"

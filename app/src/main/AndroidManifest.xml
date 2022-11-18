@@ -13,6 +13,27 @@
         android:theme="@style/Theme.MaterialComponents.Light.NoActionBar"
         tools:targetApi="31">
         <activity
+            android:name=".PdfViewActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".PdfDetailActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".PdfEditActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".PdfListAdminActivity"
             android:exported="false">
             <meta-data
@@ -47,6 +68,7 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+        <!--
         <activity
             android:name=".DashboardActivity"
             android:exported="false">
@@ -54,6 +76,7 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+        -->
         <activity
             android:name=".LoginActivity"
             android:exported="false">
