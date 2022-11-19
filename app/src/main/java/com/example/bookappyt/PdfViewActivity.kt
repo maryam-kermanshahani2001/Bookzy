@@ -43,7 +43,7 @@ class PdfViewActivity : AppCompatActivity() {
         Log.d(TAG, "loadBookDetails: Get Pdf URL from db")
         // Database reference to get book details e.g. get book url using book id
         // Step (1) Get Book Url using Book Id
-        val ref = FirebaseDatabase.getInstance().getReference("books")
+        val ref = FirebaseDatabase.getInstance().getReference("Books")
         ref.child(bookId)
             .addListenerForSingleValueEvent(object : ValueEventListener{
                 override fun onDataChange(snapshot: DataSnapshot) {
