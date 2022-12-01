@@ -231,13 +231,23 @@
         android:layout_alignParentBottom="true"
         android:background="@color/design_default_color_primary">
 
+        <!--Button: read book-->
         <Button
             android:id="@+id/readBookBtn"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="Read"
             android:drawableTop="@drawable/ic_book_white"
             android:layout_weight="1"/>
+
+        <!--Button: download book-->
+        <Button
+            android:id="@+id/downloadBookBtn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Download"
+            android:drawableTop="@drawable/ic_download_white"
+            android:layout_weight="1" />
 
     </LinearLayout>
 </RelativeLayout>
