@@ -1,7 +1,9 @@
 package com.example.bookappyt
 
 import android.os.Bundle
-import android.util.log
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -53,7 +55,7 @@ class BooksUserFragment: Fragment {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentBooksUserBinding.inflate(LayoutInflater.from(context), container, false)
 
-        log.d(TAG, "onCreateView: Category: $category")
+        Log.d(TAG, "onCreateView: Category: $category")
 
         if (category == "All") {
             loadAllBooks()
@@ -72,12 +74,12 @@ class BooksUserFragment: Fragment {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 
             }
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            override fun onTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 try {
                     adapterPdfUser.filter.filter(s)
                 }
                 catch(e: Exception) {
-                    log.d(TAG, "onTextChanged: SEARCH_EXCEPTION: ${e.message}")
+                    Log.d(TAG, "onTextChanged: SEARCH_EXCEPTION: ${e.message}")
                 }
             }
             override fun afterTextChanged(p0: Editable?) {

@@ -1,10 +1,19 @@
 package com.example.bookappyt
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
+import androidx.viewpager.widget.ViewPager
 import com.example.bookappyt.databinding.ActivityDashboardUserBinding
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 class DashboardUserActivity : AppCompatActivity() {
 
@@ -48,8 +57,8 @@ class DashboardUserActivity : AppCompatActivity() {
         categoryArrayList = ArrayList()
 
         val ref = FirebaseDatabase.getInstance().getReference("Categories")
-        ref.addListenerForSingleValueEvent(object: ValueEventListener{
-            override fun onDataChange(snapshot: DataSnapShot) {
+        ref.addListenerForSingleValueEvent(object: ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
                 categoryArrayList.clear()
 
                 val modelAll = ModelCategory("01", "All", 1, "")

@@ -1,13 +1,23 @@
 package com.example.bookappyt
 
+import android.Manifest
+import android.app.ProgressDialog
 import android.content.Intent
+import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Environment
+import android.util.Log
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import com.example.bookappyt.databinding.ActivityPdfDetailBinding
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.storage.FirebaseStorage
+import java.io.FileOutputStream
 
 class PdfDetailActivity : AppCompatActivity() {
     // view binding
@@ -59,11 +69,11 @@ class PdfDetailActivity : AppCompatActivity() {
         binding.downloadBookBtn.setOnClickListener {
             // check WRITE_EXTERNAL_STORAGE permission, if granted download book and else request permission
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                log.d(TAG, "onCreate: STORAGE PERMISSION is already granted")
+                Log.d(TAG, "onCreate: STORAGE PERMISSION is already granted")
                 downloadBook()
             }
             else {
-                log.d(TAG, "onCreate: STORAGE PERMISSION was not granted, request it")
+                Log.d(TAG, "onCreate: STORAGE PERMISSION was not granted, request it")
                 requestStoragePermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
             }
         }
@@ -72,17 +82,17 @@ class PdfDetailActivity : AppCompatActivity() {
     private val requestStoragePermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
         // check if granted or not
         if (isGranted) {
-            log.d(TAG, "onCreate: STORAGE PERMISSION is granted")
+            Log.d(TAG, "onCreate: STORAGE PERMISSION is granted")
             downloadBook()
         }
         else {
-            log.d(TAG, "onCreate: STORAGE PERMISSON is denied")
+            Log.d(TAG, "onCreate: STORAGE PERMISSON is denied")
             Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun downloadBook() {
-        log.d(TAG, "downloadBook: Downloading Book")
+        Log.d(TAG, "downloadBook: Downloading Book")
         progressDialog.setMessage("Downloading Book")
         progressDialog.show()
 
@@ -90,23 +100,23 @@ class PdfDetailActivity : AppCompatActivity() {
         val storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(bookUrl)
         storageReference.getBytes(Constants.MAX_BYTES_PDF)
             .addOnSuccessListener { bytes ->
-                log.d(TAG, "downloadBook: Book Downloaded")
-                saveToDownloadFolder(bytes)
+                Log.d(TAG, "downloadBook: Book Downloaded")
+                saveToDownloadsFolder(bytes)
             }
             .addOnFailureListener { e ->
                 progressDialog.dismiss()
-                log.d(TAG, "downloadBook: Failed to download due to ${e.message}")
+                Log.d(TAG, "downloadBook: Failed to download due to ${e.message}")
                 Toast.makeText(this, "Failed to download due to ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
 
     private fun saveToDownloadsFolder(bytes: ByteArray?) {
-        log.d(TAG, "saveToDownloadsFolder: Saving Downloaded Book")
+        Log.d(TAG, "saveToDownloadsFolder: Saving Downloaded Book")
 
         val namWithExtention = "${System.currentTimeMillis()}-$bookTitle.pdf"
 
         try {
-            val downloadsFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY.DOWNLOADS)
+            val downloadsFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
             downloadsFolder.mkdirs()
 
             val filePath = downloadsFolder.path + "/" + namWithExtention
@@ -116,33 +126,33 @@ class PdfDetailActivity : AppCompatActivity() {
             out.close()
 
             Toast.makeText(this, "Saved to Downloads Folder", Toast.LENGTH_SHORT).show()
-            log.d(TAG, "saveToDownloadsFolder: Saved to Downloads Folder")
+            Log.d(TAG, "saveToDownloadsFolder: Saved to Downloads Folder")
             progressDialog.dismiss()
             incrementDownloadCount()
         }
         catch(e: Exception) {
             progressDialog.dismiss()
-            log.d(TAG, "saveToDownloadsFolder: Failed to Save due to ${e.message}")
+            Log.d(TAG, "saveToDownloadsFolder: Failed to Save due to ${e.message}")
             Toast.makeText(this, "Failed to Save due to ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun incrementDownloadCount() {
-        log.d(TAG, "incrementDownloadCount: ")
+        Log.d(TAG, "incrementDownloadCount: ")
 
         val ref = FirebaseDatabase.getInstance().getReference("Books")
         ref.child(bookId)
             .addListenerForSingleValueEvent(object: ValueEventListener{
-                override fun onDataChange(snapshot: DataSnapShot) {
+                override fun onDataChange(snapshot: DataSnapshot) {
                     var downloadsCount = "${snapshot.child("downloadsCount").value}"
-                    log.d(TAG, "onDataChange: Current Downloads Count: $downloadsCount")
+                    Log.d(TAG, "onDataChange: Current Downloads Count: $downloadsCount")
 
                     if (downloadsCount == "" || downloadsCount == "null") {
                         downloadsCount = "0"
                     }
 
                     val newDownloadCount: Long = downloadsCount.toLong() + 1
-                    log.d(TAG, "onDataChange: New Downloads Count: $newDownloadCount")
+                    Log.d(TAG, "onDataChange: New Downloads Count: $newDownloadCount")
 
                     val hashMap: HashMap<String, Any> = HashMap()
                     hashMap["downloadsCount"] = newDownloadCount
@@ -151,10 +161,10 @@ class PdfDetailActivity : AppCompatActivity() {
                     dbRef.child(bookId)
                         .updateChildren(hashMap)
                         .addOnSuccessListener {
-                            log.d(TAG, "onDataChange: Downloads Count Incremented")
+                            Log.d(TAG, "onDataChange: Downloads Count Incremented")
                         }
                         .addOnFailureListener { e ->
-                            log.d(TAG, "onDataChange: Failed to Increment due to ${e.message}")
+                            Log.d(TAG, "onDataChange: Failed to Increment due to ${e.message}")
                         }
                 }
 

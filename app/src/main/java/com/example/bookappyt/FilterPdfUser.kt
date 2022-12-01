@@ -2,7 +2,7 @@ package com.example.bookappyt
 
 import android.widget.Filter
 
-class FilterPdfUser {
+class FilterPdfUser: Filter {
     var filterList: ArrayList<ModelPdf>
     var adapterPdfUser: AdapterPdfUser
 
@@ -27,7 +27,7 @@ class FilterPdfUser {
 
         } else {
             results.count = filterList.size
-            results.value = filterList
+            results.values = filterList
         }
         return results
     }

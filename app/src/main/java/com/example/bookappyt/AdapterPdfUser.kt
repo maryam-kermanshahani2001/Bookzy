@@ -5,12 +5,13 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Filter
 import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
-import com.example.bookappyt.databinding.RowPdfUserBiniding
+import com.example.bookappyt.databinding.RowPdfUserBinding
 
 class AdapterPdfUser : RecyclerView.Adapter<AdapterPdfUser.HolderPdfUser>, Filterable {
-    private var context: Cotext
+    private var context: Context
     public var pdfArrayList: ArrayList<ModelPdf>
     public var filterList: ArrayList<ModelPdf>
     private lateinit var binding: RowPdfUserBinding
@@ -24,13 +25,13 @@ class AdapterPdfUser : RecyclerView.Adapter<AdapterPdfUser.HolderPdfUser>, Filte
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HolderPdfUser {
-        binding = RowPdfUserBiniding.inflate(LayoutInflater.from(context), parent, false)
+        binding = RowPdfUserBinding.inflate(LayoutInflater.from(context), parent, false)
         return HolderPdfUser(binding.root)
     }
 
     override fun onBindViewHolder(holder: HolderPdfUser, position: Int) {
         val model = pdfArrayList[position]
-        val id = model.id
+        val bookId = model.id
         val categoryId = model.categoryId
         val title = model.title
         val description = model.description
