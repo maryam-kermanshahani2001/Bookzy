@@ -56,9 +56,9 @@ class PdfViewActivity : AppCompatActivity() {
                     Log.d(TAG, "onDataChange: PDF_URL: $pdfUrl")
 
                     // Step (2) load pdf using url from firebase storage
-                    //loadBookFromUrl("$pdfUrl")
+                    loadBookFromUrl("$pdfUrl")
                     //val pdfUrl2 = "https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_mobile_about.pdf"
-                    openHttpDocument(context, "$pdfUrl")
+                    //openHttpDocument(context, "$pdfUrl")
 
                     // Open our sample document in the 'res/raw' resource folder
                     //openRawResourceDocument(context, R.raw.sample)

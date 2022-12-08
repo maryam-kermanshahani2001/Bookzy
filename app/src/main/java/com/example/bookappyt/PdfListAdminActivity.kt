@@ -47,6 +47,10 @@ class PdfListAdminActivity : AppCompatActivity() {
         // load pdf/books
         loadPdfList()
 
+        // handle click, goback
+        binding.backBtn.setOnClickListener {
+            onBackPressed()
+        }
 
         // search
         binding.searchEt.addTextChangedListener(object : TextWatcher {
