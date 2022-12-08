@@ -1,16 +1,21 @@
 package com.example.bookappyt
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Context
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.annotation.RawRes
+import androidx.appcompat.app.AppCompatActivity
 import com.example.bookappyt.databinding.ActivityPdfViewBinding
-import com.github.barteksc.pdfviewer.PDFView
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
+import com.pdftron.pdf.config.ViewerConfig
+import com.pdftron.pdf.controls.DocumentActivity
+import java.io.File
 
 class PdfViewActivity : AppCompatActivity() {
     // View binding
@@ -31,7 +36,7 @@ class PdfViewActivity : AppCompatActivity() {
 
         // get book id back
         bookId = intent.getStringExtra("bookId")!!
-        loadBookDetails()
+        loadBookDetails(this)
 
         // handle click, goback
         binding.backBtn.setOnClickListener {
@@ -39,7 +44,7 @@ class PdfViewActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadBookDetails() {
+    private fun loadBookDetails(context: Context) {
         Log.d(TAG, "loadBookDetails: Get Pdf URL from db")
         // Database reference to get book details e.g. get book url using book id
         // Step (1) Get Book Url using Book Id
@@ -51,7 +56,13 @@ class PdfViewActivity : AppCompatActivity() {
                     Log.d(TAG, "onDataChange: PDF_URL: $pdfUrl")
 
                     // Step (2) load pdf using url from firebase storage
-                    loadBookFromUrl("$pdfUrl")
+                    //loadBookFromUrl("$pdfUrl")
+                    //val pdfUrl2 = "https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_mobile_about.pdf"
+                    openHttpDocument(context, "$pdfUrl")
+
+                    // Open our sample document in the 'res/raw' resource folder
+                    //openRawResourceDocument(context, R.raw.sample)
+                    //finish()
                 }
 
                 override fun onCancelled(error: DatabaseError) {
@@ -88,5 +99,71 @@ class PdfViewActivity : AppCompatActivity() {
                 Log.d(TAG, "loadBookFromUrl: Failed to get due to ${e.message}")
                 binding.progressBar.visibility = View.GONE
             }
+    }
+
+
+    /**
+     * Open a local document given a path
+     *
+     * @param context the context to start the document reader
+     * @param localFilePath local path to a document
+     */
+    private fun openLocalDocument(context: Context, localFilePath: String) {
+        val localFile = Uri.fromFile(File(localFilePath))
+        presentDocument(localFile)
+    }
+
+    /**
+     * Open a document given a Content Uri
+     *
+     * @param context the context to start the document reader
+     * @param contentUri a content URI that references a document
+     */
+    private fun openContentUriDocument(context: Context, contentUri: Uri) {
+        presentDocument(contentUri)
+    }
+
+    /**
+     * Open a document from an HTTP/HTTPS url
+     *
+     * @param context the context to start the document reader
+     * @param url an HTTP/HTTPS url to a document
+     */
+    private fun openHttpDocument(context: Context, url: String) {
+        val config = ViewerConfig.Builder().openUrlCachePath(this.getCacheDir().getAbsolutePath()).build()
+        val fileLink = Uri.parse(url)
+        presentDocument(fileLink, config)
+    }
+
+    /**
+     *
+     * @param context the context to start the document reader
+     * @param fileResId resource id to a document in res/raw
+     */
+    private fun openRawResourceDocument(context: Context, @RawRes fileResId: Int) {
+        val intent =
+            DocumentActivity.IntentBuilder.fromActivityClass(this, DocumentActivity::class.java)
+                .withFileRes(fileResId)
+                .usingNewUi(true)
+                .build()
+        startActivity(intent)
+    }
+
+    private fun presentDocument(uri: Uri) {
+        presentDocument(uri, null)
+    }
+
+    private fun presentDocument(uri: Uri, config: ViewerConfig?) {
+        var config = config
+        if (config == null) {
+            config = ViewerConfig.Builder().saveCopyExportPath(this.cacheDir.absolutePath).build()
+        }
+        val intent =
+            DocumentActivity.IntentBuilder.fromActivityClass(this, DocumentActivity::class.java)
+                .withUri(uri)
+                .usingConfig(config)
+                .usingNewUi(true)
+                .build()
+        startActivity(intent)
     }
 }
