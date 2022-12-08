@@ -1,18 +1,18 @@
 package com.example.bookappyt
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.Display.Mode
+import androidx.appcompat.app.AppCompatActivity
 import com.example.bookappyt.databinding.ActivityDashboardAdminBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.core.view.View
+
 
 class DashboardAdminActivity : AppCompatActivity() {
     // view binding
@@ -26,6 +26,9 @@ class DashboardAdminActivity : AppCompatActivity() {
 
     // adapter
     private lateinit var adapterCategory: AdapterCategory
+
+    private val player = MediaPlayer()
+    private val afd = assets.openFd("/raw/Autumn")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,11 +61,22 @@ class DashboardAdminActivity : AppCompatActivity() {
             }
         })
 
-        // handle click, lot out
+        // handle click, log out
         binding.logoutBtn.setOnClickListener {
 
             firebaseAuth.signOut()
             checkUser()
+        }
+
+
+        binding.playBtn.setOnClickListener {
+            if (!player.isPlaying) {
+                player.setDataSource(afd.fileDescriptor, afd.startOffset, afd.length)
+                player.prepare()
+                player.start()
+            } else {
+                player.stop()
+            }
         }
 
         // handle click start category add screen
