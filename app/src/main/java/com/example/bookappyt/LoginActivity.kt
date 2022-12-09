@@ -63,6 +63,7 @@ class LoginActivity : AppCompatActivity() {
     private var password = ""
 
     private fun validateData() {
+
         // 1) Input data
         email = binding.emailEt.text.toString().trim()
         password = binding.passwordEt.text.toString().trim()

@@ -1,9 +1,16 @@
 package com.example.bookappyt
 
+import android.R
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.media.MediaPlayer
 import android.os.Bundle
+import android.util.Log
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
@@ -16,6 +23,8 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
 class DashboardUserActivity : AppCompatActivity() {
+    // name of the chosen song
+    private var songName: String = "raw/autumn"
 
     // view binding
     private lateinit var binding: ActivityDashboardUserBinding
@@ -27,6 +36,9 @@ class DashboardUserActivity : AppCompatActivity() {
     private lateinit var viewPagerAdapter: ViewPagerAdapter
 
 
+    // media player
+    var mMediaPlayer: MediaPlayer? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDashboardUserBinding.inflate(layoutInflater)
@@ -35,6 +47,32 @@ class DashboardUserActivity : AppCompatActivity() {
         // init firebase auth
         firebaseAuth  = FirebaseAuth.getInstance()
         checkUser()
+
+
+        val arraySpinner = arrayOf(
+            "Autumn", "Norwegian_Wood", "Moonswept"
+        )
+
+        val adapter = ArrayAdapter(
+            this,
+            R.layout.simple_spinner_item, arraySpinner
+        )
+        adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
+        binding.spinnerSong.adapter = adapter
+        binding.spinnerSong.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                Log.d("MEDIA PLAYER", "set song: ${arraySpinner[position]}")
+                songName = "raw/" + arraySpinner[position].lowercase()
+                stopSound()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
 
         setupWithViewPagerAdapter(binding.viewPager)
         binding.tabLayout.setupWithViewPager(binding.viewPager)
@@ -45,7 +83,41 @@ class DashboardUserActivity : AppCompatActivity() {
             finish()
         }
 
+        binding.playBtn.setOnClickListener {
+            if (mMediaPlayer == null || !mMediaPlayer!!.isPlaying) {
+                playSound()
+            } else {
+                pauseSound()
+            }
+        }
+
     }
+
+    // 1. Plays the water sound
+    @SuppressLint("DiscouragedApi")
+    fun playSound() {
+        if (mMediaPlayer == null) {
+            Log.d("MEDIA PLAYER", "song to play: $songName")
+            mMediaPlayer = MediaPlayer.create(this, this.resources.getIdentifier(songName, "id", this.packageName))
+            mMediaPlayer!!.isLooping = true
+            mMediaPlayer!!.start()
+        } else mMediaPlayer!!.start()
+    }
+
+    // 2. Pause playback
+    fun pauseSound() {
+        if (mMediaPlayer?.isPlaying == true) mMediaPlayer?.pause()
+    }
+
+    // 3. Stops playback
+    fun stopSound() {
+        if (mMediaPlayer != null) {
+            mMediaPlayer!!.stop()
+            mMediaPlayer!!.release()
+            mMediaPlayer = null
+        }
+    }
+
 
     private fun setupWithViewPagerAdapter(viewPager: ViewPager) {
         viewPagerAdapter = ViewPagerAdapter(

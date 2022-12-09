@@ -71,6 +71,11 @@ class PdfAddActivity : AppCompatActivity() {
             pdfPickIntent()
         }
 
+        // handle click, go back
+        binding.backBtn.setOnClickListener{
+            onBackPressed()
+        }
+
         // handle click, start uploading pdf/book
         binding.submitBtn.setOnClickListener {
             // ste1: validate data

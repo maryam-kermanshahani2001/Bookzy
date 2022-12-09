@@ -1,10 +1,18 @@
 package com.example.bookappyt
 
+import android.R.layout.simple_spinner_item
+import android.R.layout.simple_spinner_dropdown_item
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
 import com.example.bookappyt.databinding.ActivityDashboardAdminBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -15,6 +23,9 @@ import com.google.firebase.database.ValueEventListener
 
 
 class DashboardAdminActivity : AppCompatActivity() {
+    // name of the chosen song
+    private var songName: String = "raw/autumn"
+
     // view binding
     private lateinit var binding: ActivityDashboardAdminBinding
 
@@ -27,8 +38,9 @@ class DashboardAdminActivity : AppCompatActivity() {
     // adapter
     private lateinit var adapterCategory: AdapterCategory
 
-    private val player = MediaPlayer()
-    private val afd = assets.openFd("/raw/Autumn")
+    // media player
+    var mMediaPlayer: MediaPlayer? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +52,33 @@ class DashboardAdminActivity : AppCompatActivity() {
 
         checkUser()
         loadCategories()
+
+        val arraySpinner = arrayOf(
+            "Autumn", "Norwegian_Wood", "Moonswept"
+        )
+
+        val adapter = ArrayAdapter(
+            this,
+            simple_spinner_item, arraySpinner
+        )
+        adapter.setDropDownViewResource(simple_spinner_dropdown_item)
+        binding.spinnerSong.adapter = adapter
+        binding.spinnerSong.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+
+                Log.d("MEDIA PLAYER", "set song: ${arraySpinner[position]}")
+                songName = "raw/" + arraySpinner[position].lowercase()
+                stopSound()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+
 
         // search
         binding.searchEt.addTextChangedListener(object : TextWatcher {
@@ -61,6 +100,7 @@ class DashboardAdminActivity : AppCompatActivity() {
             }
         })
 
+
         // handle click, log out
         binding.logoutBtn.setOnClickListener {
 
@@ -69,13 +109,12 @@ class DashboardAdminActivity : AppCompatActivity() {
         }
 
 
+
         binding.playBtn.setOnClickListener {
-            if (!player.isPlaying) {
-                player.setDataSource(afd.fileDescriptor, afd.startOffset, afd.length)
-                player.prepare()
-                player.start()
+            if (mMediaPlayer == null || !mMediaPlayer!!.isPlaying) {
+                playSound()
             } else {
-                player.stop()
+                pauseSound()
             }
         }
 
@@ -97,10 +136,41 @@ class DashboardAdminActivity : AppCompatActivity() {
             startActivity(Intent(this,PdfAddActivity::class.java))
 
         }
-
-
-
     }
+
+    // 1. Plays the water sound
+    @SuppressLint("DiscouragedApi")
+    fun playSound() {
+        if (mMediaPlayer == null) {
+            Log.d("MEDIA PLAYER", "song to play: $songName")
+            mMediaPlayer = MediaPlayer.create(this, this.resources.getIdentifier(songName, "id", this.packageName))
+            mMediaPlayer!!.isLooping = true
+            mMediaPlayer!!.start()
+        } else mMediaPlayer!!.start()
+    }
+
+    // 2. Pause playback
+    fun pauseSound() {
+        if (mMediaPlayer?.isPlaying == true) mMediaPlayer?.pause()
+    }
+
+    // 3. Stops playback
+    fun stopSound() {
+        if (mMediaPlayer != null) {
+            mMediaPlayer!!.stop()
+            mMediaPlayer!!.release()
+            mMediaPlayer = null
+        }
+    }
+
+    // 4. Destroys the MediaPlayer instance when the app is closed
+    //override fun onStop() {
+    //    super.onStop()
+    //    if (mMediaPlayer != null) {
+    //        mMediaPlayer!!.release()
+    //        mMediaPlayer = null
+    //    }
+    //}
 
     private fun loadCategories() {
         // init arraylist

@@ -41,6 +41,26 @@
             android:background="@android:color/transparent"
             android:src="@drawable/ic_logout_white" />
 
+        <ImageButton
+            android:id="@+id/playBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_media_play" />
+
+        <Spinner
+            android:id="@+id/spinner_song"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@+id/playBtn"
+            android:theme="@style/Theme.Material3.Dark"
+            android:popupTheme="@style/Theme.Material3.Dark"
+            android:spinnerMode="dropdown"/>
+
 
     </RelativeLayout>
 

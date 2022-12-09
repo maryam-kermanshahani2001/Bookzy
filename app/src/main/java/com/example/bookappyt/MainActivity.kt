@@ -31,7 +31,5 @@ class MainActivity : AppCompatActivity() {
         }
 
         // now lets connect with firebase
-
-
     }
 }
