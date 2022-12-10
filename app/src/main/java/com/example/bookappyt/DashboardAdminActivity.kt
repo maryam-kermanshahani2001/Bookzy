@@ -164,13 +164,13 @@ class DashboardAdminActivity : AppCompatActivity() {
     }
 
     // 4. Destroys the MediaPlayer instance when the app is closed
-    //override fun onStop() {
-    //    super.onStop()
-    //    if (mMediaPlayer != null) {
-    //        mMediaPlayer!!.release()
-    //        mMediaPlayer = null
-    //    }
-    //}
+    override fun onDestroy() {
+        super.onDestroy()
+        if (mMediaPlayer != null) {
+            mMediaPlayer!!.release()
+            mMediaPlayer = null
+        }
+    }
 
     private fun loadCategories() {
         // init arraylist

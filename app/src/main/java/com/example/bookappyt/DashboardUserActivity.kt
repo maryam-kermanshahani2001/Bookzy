@@ -118,6 +118,15 @@ class DashboardUserActivity : AppCompatActivity() {
         }
     }
 
+    // 4. Destroys the MediaPlayer instance when the app is closed
+    override fun onDestroy() {
+        super.onDestroy()
+        if (mMediaPlayer != null) {
+            mMediaPlayer!!.release()
+            mMediaPlayer = null
+        }
+    }
+
 
     private fun setupWithViewPagerAdapter(viewPager: ViewPager) {
         viewPagerAdapter = ViewPagerAdapter(
