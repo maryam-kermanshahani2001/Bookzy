@@ -4,7 +4,7 @@ Android E-book Reader Application by Kotlin
 Mobile Programming Course Project  
 Winter 2022  
 
-We learnt so many things from this tutorial and we add several other great features like listening to music, a pdf reader with edit option: https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=video&cd=&cad=rja&uact=8&ved=2ahUKEwjF6Or_u8WBAxW_hP0HHcb1Bg0QtwJ6BAgNEAI&url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3D0Zd2Qf7iKqQ&usg=AOvVaw05tXPbzcdW9YTEd1Af_eoJ&opi=89978449.
+We learnt so many things from this tutorial and we add several other great features like listening to music, a pdf reader with edit option, etc: https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=video&cd=&cad=rja&uact=8&ved=2ahUKEwjF6Or_u8WBAxW_hP0HHcb1Bg0QtwJ6BAgNEAI&url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3D0Zd2Qf7iKqQ&usg=AOvVaw05tXPbzcdW9YTEd1Af_eoJ&opi=89978449.
 ## Screenshots
 intro:  
 ![intro](docs/_images/screenshot-01.jpg)  
